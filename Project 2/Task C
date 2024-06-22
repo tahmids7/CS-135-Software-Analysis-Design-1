@@ -1,0 +1,196 @@
+//Name: Tahmid Sahan
+//Date: 4/20/23
+//Course: CS-135
+//Course Instructor: Genady Maryash
+//Rec Instructor: Enxhi Osmanllari
+//Assignment: Project 2 Task C
+
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+class Song
+{
+  public:
+    string name;
+    string artist;
+    int duration;
+    string genre;
+};
+
+int g_capacity = 2;
+int g_size = 0;
+
+Song *g_songs = new Song[g_capacity];
+
+void allocateNew() 
+{
+  
+  Song *new_songs = new Song[g_capacity * 2];
+  for (int i = 0; i < g_size; i++) 
+  {
+      new_songs[i] = g_songs[i];
+  }
+  
+  g_capacity *= 2;
+  delete[] g_songs;
+  g_songs = new_songs;
+}
+
+void readSongs(string filename)
+{
+  ifstream fin(filename);
+  if (fin.fail()) 
+  {
+    cerr << "File cannot be opened for reading."
+         << "\n";
+    exit(1);
+  }
+
+  string first;
+  getline(fin , first , ':');
+  g_songs[0].name = first;
+  getline(fin , first , '-');
+  g_songs[0].artist = first;
+  getline(fin , first , '-');
+  g_songs[0].genre = first;
+  getline(fin , first , ' ');
+  g_songs[0].duration = stoi(first);
+  g_size++;
+  string line, song, artist, genre, duration;
+  while (getline(fin, line))
+    {
+    if(g_size == g_capacity)
+    {
+      allocateNew();
+    }
+
+    getline(fin, song, ':');
+    getline(fin, artist, '-');
+    getline(fin, genre, '-');
+    getline(fin, duration, ' ');
+    g_songs[g_size].name = song;
+    g_songs[g_size].artist = artist;
+    g_songs[g_size].genre = genre;
+    g_songs[g_size].duration = stoi(duration);
+    g_size++;
+  }
+
+  g_size--;
+  fin.close();
+}
+
+Song *getGenreSongs(string genre, int &genreCount) 
+{
+  
+  Song *songs_ofgenre = new Song[g_size];
+  int index = 0;
+  for (int i = 0; i < g_size; i++) 
+  {
+    if (g_songs[i].genre == genre) 
+    {
+      songs_ofgenre[index].name = g_songs[i].name;
+      songs_ofgenre[index].artist = g_songs[i].artist;
+      songs_ofgenre[index].genre = g_songs[i].genre;
+      songs_ofgenre[index].duration = g_songs[i].duration;
+      index++;
+    }
+  }
+  genreCount = index;
+  return songs_ofgenre;
+}
+
+Song *getSongsFromDuration(int duration, int &durationsCount, int filter) 
+{
+  
+  Song *songs_ofdur = new Song[g_size];
+  int index = 0;
+  for (int i = 0; i < g_size; i++)
+    {
+    if (filter == 0 && g_songs[i].duration > duration) 
+    {
+      songs_ofdur[index].name = g_songs[i].name;
+      songs_ofdur[index].artist = g_songs[i].artist;
+      songs_ofdur[index].genre = g_songs[i].genre;
+      songs_ofdur[index].duration = g_songs[i].duration;
+      index++;
+    } 
+    else if (filter == 1 && g_songs[i].duration < duration)
+    {
+      songs_ofdur[index].name = g_songs[i].name;
+      songs_ofdur[index].artist = g_songs[i].artist;
+      songs_ofdur[index].genre = g_songs[i].genre;
+      songs_ofdur[index].duration = g_songs[i].duration;
+      index++;
+    } 
+    else if (filter == 2 && g_songs[i].duration == duration) 
+    {
+      songs_ofdur[index].name = g_songs[i].name;
+      songs_ofdur[index].artist = g_songs[i].artist;
+      songs_ofdur[index].genre = g_songs[i].genre;
+      songs_ofdur[index].duration = g_songs[i].duration;
+      index++;
+    }
+  }
+  
+  durationsCount = index;
+  return songs_ofdur;
+}
+
+string *getUniqueArtists(int &uniqueCount) 
+{
+  
+  string *unique = new string[g_size]; 
+  uniqueCount = 0;
+  bool booler;
+  for (int i = 0; i < g_size; i++) 
+  {
+    booler = false;
+    for (int j = 0; j < uniqueCount; j++) 
+    {
+      if (unique[j] == g_songs[i].artist)
+      {
+        booler = true;
+        break;
+      }
+    }
+    if (!booler) 
+    {
+      unique[uniqueCount] = g_songs[i].artist;
+      uniqueCount++;
+    }
+  }
+  
+  return unique;
+  
+}
+
+string getFavoriteArtist()
+{
+    if (g_size == 0) 
+    {
+      return "NONE";
+    }
+  
+    int current = 0;
+    string favorite = "";
+    for (int i = 0; i < g_size; i++)
+      {
+
+      int next = 0;
+      for (int j = 0; j < g_size; j++) 
+      {
+        if (g_songs[i].artist == g_songs[j].artist) 
+        {
+          next++;
+        }
+      }
+      
+      if (next > current) 
+      {
+        current = next;
+        favorite = g_songs[i].artist;
+      }
+    }
+    return favorite;
+}
