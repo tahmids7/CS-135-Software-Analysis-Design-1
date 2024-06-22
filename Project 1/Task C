@@ -1,0 +1,154 @@
+//Name: Tahmid Sahan
+//Date: March 6, 2023
+//Course: CS-135
+//Course Instructor: Genady Maryash
+//Recitation Instructor: Enxhi Osmanllari
+//Assignment: Project 1
+
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+const int g_MAX_WORDS = 1000;
+int g_word_count = 0;
+
+string g_words[g_MAX_WORDS];
+string g_definitions[g_MAX_WORDS];
+string g_pos[g_MAX_WORDS];
+
+
+int getIndex(string word)
+{
+  int x;
+  for (x=0; x < g_word_count; x++)
+  {
+    if (word == g_words[x])
+    {
+      return x;
+    }
+  }
+  return -1;
+}
+
+
+bool addWord(string word, string definition, string pos) 
+{
+  
+  if (getIndex(word) != -1)
+  {
+    return false;
+  }
+  else if (g_word_count <= g_MAX_WORDS)
+  {
+    g_words[g_word_count] = word;
+    g_definitions[g_word_count] = definition;
+    g_pos[g_word_count] = pos;
+  }
+  
+  g_word_count++;
+  return true;
+}
+
+bool editWord(string word, string definition, string pos) 
+{
+  
+  int i;
+  if (getIndex(word) == -1)
+  {
+    return false;
+  } 
+  else if (getIndex(word) != -1) 
+  {
+    g_definitions[getIndex(word)] = definition;
+    g_pos[getIndex(word)] = pos;
+  }
+
+  return true;
+}
+
+bool removeWord(string word)
+{
+  
+  if (getIndex(word) == -1)
+  {
+    return false;
+  } 
+  else if (getIndex(word)!= -1) 
+  {
+    for (int i = (getIndex(word)); i < g_word_count; i++)
+    {
+      g_words[i] = g_words[i+1];
+      g_definitions[i] = g_definitions[i+1];
+      g_pos[i] = g_pos[i+1];  
+    }
+  }
+
+  g_word_count--;
+  return true;
+}
+
+string getDefinition(string word)
+{
+  int b;
+  for (b=0; b<g_word_count; b++)
+  {
+    if (g_words[b]==word)
+    {
+      return g_definitions[b];
+    }
+  }
+  return "NOT_FOUND";
+}
+
+string getPOS(string word)
+{
+  int c;
+  for (c=0; c<g_word_count; c++)
+  {
+    if (g_words[c]==word)
+    {
+      return g_pos[c];
+    }
+  }
+  return "NOT_FOUND";
+}
+
+int countPrefix(string prefix)
+{
+  string a = prefix;
+  int starter = 0;
+  int d;
+  for (d=0; d<g_word_count; d++)
+  {
+    if (g_words[d].substr(0,a.length()) == prefix)
+    {
+      starter+=1;
+    }
+  }
+  return starter;
+}
+
+void readWords(string filename) 
+{
+ifstream fin(filename);
+if (fin.fail()) {
+    cerr << "File can't be opened for reading." <<endl;
+    exit(1); 
+}
+
+string word;
+string definition;
+string partofspeech; 
+string col;
+
+while(fin >> word >> partofspeech >> col ) 
+ { 
+    g_words[g_word_count]=word;
+    g_pos[g_word_count]=partofspeech;
+    getline(fin,definition);
+    g_definitions[g_word_count]=definition.substr(1);
+    g_word_count+=1;
+    }
+
+}
