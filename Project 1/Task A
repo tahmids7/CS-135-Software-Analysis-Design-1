@@ -1,0 +1,44 @@
+//Name: Tahmid Sahan
+//Date: 3/1/23
+//Course: CS-135
+//Instructor: Genady Maryash
+//Rec Instructor: Enxhi Osmanllari
+//Assignment: Project 1 Task A: Dictionary using Arrays
+
+// This program acts like a dictionary, where it saves the word, part of speech and definiiton into arrays, and be able to display all of that information. 
+
+
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+const int g_MAX_WORDS = 1000;
+int g_word_count = 0;
+
+string g_words[g_MAX_WORDS];
+string g_definitions[g_MAX_WORDS];
+string g_pos[g_MAX_WORDS];
+
+void readWords(string filename) 
+{
+ifstream fin(filename);
+if (fin.fail()) {
+    cerr << "File can't be opened for reading." <<endl;
+    exit(1); 
+}
+
+string word;
+string definition;
+string partofspeech; 
+string col;
+
+while(fin >> word >> partofspeech >> col ) { 
+    g_words[g_word_count]=word;
+    g_pos[g_word_count]=partofspeech;
+    getline(fin,definition);
+    g_definitions[g_word_count]=definition.substr(1);
+    g_word_count+=1;
+    }
+
+}
