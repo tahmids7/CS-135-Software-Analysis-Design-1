@@ -1,0 +1,118 @@
+//Name: Tahmid Sahan
+//Date: 3/23/22
+//Course: CS-135
+//Course Instructor: Genady Maryash
+//Rec Instructor: Enxhi Osmanllari
+//Assignment: Project 2 Task A
+
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+int g_curr_size = 2;
+int g_number_of_songs = 0;
+string *g_song_names = new string[g_curr_size];
+string *g_artist_names = new string[g_curr_size];
+int *g_song_durations = new int[g_curr_size];
+string *g_genres = new string[g_curr_size];
+
+void allocateNew()
+{
+  string *more_song_names = new string[g_curr_size*2];
+  string *more_artist_names = new string[g_curr_size*2];
+  int *more_song_durations = new int[g_curr_size*2];
+  string *more_genres = new string[g_curr_size*2];
+  for (int i = 0; i < g_curr_size; i++) 
+  {
+    more_song_names[i] = g_song_names[i];
+    more_artist_names[i] = g_artist_names[i];
+    more_song_durations[i] = g_song_durations[i];
+    more_genres[i] = g_genres[i];
+  }
+
+  delete [] g_song_names;
+  delete [] g_artist_names;
+  delete [] g_genres;
+  delete [] g_song_durations;
+  g_song_names = more_song_names;
+  g_artist_names = more_artist_names;
+  g_genres = more_genres;
+  g_song_durations = more_song_durations;
+  g_curr_size *= 2;
+}
+
+void readSongs(string filename)
+{
+  ifstream fin(filename);
+  if (fin.fail()) 
+  {
+    cerr << "File cannot be opened for reading."
+         << "\n";
+    exit(1);
+  }
+
+  string first;
+  getline(fin , first , ':');
+  g_song_names[0]= first;
+  getline(fin , first , '-');
+  g_artist_names[0] = first;
+  getline(fin , first , '-');
+  g_genres[0] = first;
+  getline(fin , first , ' ');
+  g_song_durations[0] = stoi(first);
+
+  g_number_of_songs++;
+
+  string line, song, artist, genre, duration;
+  while (getline(fin, line)) 
+  {
+    if (g_number_of_songs == g_curr_size)
+    {
+      allocateNew();
+    }
+    getline(fin, song, ':');
+    getline(fin, artist, '-');
+    getline(fin, genre, '-');
+    getline(fin, duration, ' ');
+    g_song_names[g_number_of_songs] = song;
+    g_artist_names[g_number_of_songs] = artist;
+    g_genres[g_number_of_songs] = genre;
+    g_song_durations[g_number_of_songs] = stoi(duration);
+    g_number_of_songs++;
+  }
+
+  g_number_of_songs--;
+  fin.close();
+}
+
+int main() {
+
+  readSongs("music.txt");
+  cout << "Number of songs: " << g_number_of_songs << "\n";
+  cout << "\n";
+  cout << "Song names:" << "\n";
+  for (int i = 0; i < g_number_of_songs; i++) 
+  {
+    cout << g_song_names[i] << "\n";
+  }
+  cout << "\n";
+  cout << "Artist names:" << "\n";
+  for (int i = 0; i < g_number_of_songs; i++) 
+  {
+    cout << g_artist_names[i] << "\n";
+  }
+  cout << "\n";
+  cout << "Song durations:" << "\n";
+  for (int i = 0; i < g_number_of_songs; i++) 
+  {
+    cout << g_song_durations[i] << "\n";
+  }
+  cout << "\n";
+  cout << "Genres:" << "\n";
+  for (int i = 0; i < g_number_of_songs; i++)
+    {
+    cout << g_genres[i] << endl;
+  }
+  cout << "\n";
+  return 0;
+}
